@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 
 namespace NET.S._2018.Haiduk._06
 {
@@ -9,20 +9,12 @@ namespace NET.S._2018.Haiduk._06
         public void PolynomialTest1()
         {
             Polynomial p1 = new Polynomial(1.234, new int[] { 5, 6, 7, 8 });
-            Polynomial p2 = new Polynomial(1.234, p1.Coefficients);
+            Polynomial p2 = new Polynomial(1.234, p1.Coefficients);            
             Assert.IsTrue(p1.Equals(p2));            
         }
-
+                
         [Test]
         public void PolynomialTest2()
-        {
-            Polynomial p1 = new Polynomial(0.544, new int[] { 5, 6, 7, 8 });
-            Polynomial p2 = new Polynomial(0.544, new int[] { 5, 6, 7, 8 });
-            Assert.AreEqual(p1, p2);
-        }
-
-        [Test]
-        public void PolynomialTest3()
         {
             Polynomial p1 = new Polynomial(double.MaxValue, new int[] { 10, 11, 12 });
             Polynomial p2 = new Polynomial(double.MaxValue, new int[] { 10, 11, 12 });
@@ -30,7 +22,7 @@ namespace NET.S._2018.Haiduk._06
         }
 
         [Test]
-        public void PolynomialTest4()
+        public void PolynomialTest3()
         {
             Polynomial p1 = new Polynomial(double.MinValue, new int[] { 10, 11, 12 });
             Polynomial p2 = new Polynomial(double.NaN, new int[] { 10, 11, 12 });
