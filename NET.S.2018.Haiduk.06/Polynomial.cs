@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -20,7 +21,11 @@ namespace NET.S._2018.Haiduk._06
 
         public int[] Coefficients { get; private set; }
 
-        public static bool operator ==(Polynomial p1, Polynomial p2) => p1.Variable == p2.Variable && p1.Coefficients == p2.Coefficients;
+        public static bool operator ==(Polynomial p1, Polynomial p2)
+        {
+            IStructuralEquatable se1 = p1.Coefficients;
+            return p1.Variable == p2.Variable && se1.Equals(p2.Coefficients, StructuralComparisons.StructuralEqualityComparer);            
+        }
         
         public static bool operator !=(Polynomial p1, Polynomial p2) => p1.Variable != p2.Variable || p1.Coefficients != p2.Coefficients;
         
@@ -104,10 +109,9 @@ namespace NET.S._2018.Haiduk._06
 
         public override bool Equals(object obj)
         {
-            var polynomial = obj as Polynomial;
-            return polynomial != null &&
-                   Variable == polynomial.Variable &&
-                   EqualityComparer<int[]>.Default.Equals(Coefficients, polynomial.Coefficients);
+            Polynomial other = obj as Polynomial;
+            IStructuralEquatable se1 = Coefficients;
+            return other != null && Variable == other.Variable && se1.Equals(other.Coefficients, StructuralComparisons.StructuralEqualityComparer);            
         }
 
         public override int GetHashCode()
