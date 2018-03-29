@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,129 +8,271 @@ namespace NET.S._2018.Haiduk._06
     /// Public immutable class that describes polynomial of one variable and contains methods for working with it,
     /// and overrides virtual methods of System.Object class.
     /// </summary>
-    public class Polynomial
-    {                               
-        public Polynomial(double variable, int[] coefficients)
+    public sealed class Polynomial
+    {
+        private static double epsilon;
+
+        private readonly double[] coefficients = { };
+
+        private int degree;
+
+        static Polynomial()
         {
-            Variable = variable;
-            Coefficients = (int[])coefficients.Clone();
+            try
+            {
+                epsilon = double.Parse(System.Configuration.ConfigurationSettings.AppSettings["epsilon"]);
+            }
+            catch (Exception)
+            {
+                epsilon = 0.000001;
+            }            
         }
 
-        public double Variable { get; private set; }
+        /// <summary>
+        /// Public constructor for Polynomial
+        /// </summary>
+        /// <param name="coefficients">Given array of Polynomial coefficients</param>
+        public Polynomial(params double[] coefficients)
+        {
+            this.coefficients = coefficients;
+            degree = Degree;
+        }
 
-        public int[] Coefficients { get; private set; }
+        /// <summary>
+        /// Property for Polynomial degree
+        /// </summary>
+        public int Degree
+        {
+            get
+            {
+                if (coefficients.Length == 1)
+                {
+                    return 0;
+                }
 
+                int i;
+                for (i = coefficients.Length - 1; i >= 0; i--)
+                {
+                    if (Math.Abs(coefficients[i]) > epsilon)
+                    {
+                        break;
+                    }
+                }
+
+                return i;
+            }
+        }
+
+        /// <summary>
+        /// Indexer for Polynomial
+        /// </summary>
+        /// <param name="number">Index for Polynom member</param>
+        /// <returns>Member of Polynom by given index</returns>
+        public double this[int number]
+        {
+            get
+            {
+                if (degree > coefficients.Length)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+
+                return coefficients[degree];
+            }
+
+            private set
+            {
+                if (number >= 0 || number < coefficients.Length)
+                {
+                    coefficients[number] = value;
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+        #region Public Methods
+        /// <summary>
+        /// Method that overrides operator '==' to compare two Polynomials
+        /// </summary>
+        /// <param name="p1">1st polynomial</param>
+        /// <param name="p2">2nd polynomial</param>
+        /// <returns>True if polynomials are equal, else false</returns>
         public static bool operator ==(Polynomial p1, Polynomial p2)
         {
-            IStructuralEquatable se1 = p1.Coefficients;
-            return p1.Variable == p2.Variable && se1.Equals(p2.Coefficients, StructuralComparisons.StructuralEqualityComparer);            
+            if (ReferenceEquals(p1, p2))
+            {
+                return true;
+            }
+
+            if (p1 is null || p2 is null)
+            {
+                return false;
+            }
+
+            return p1.Equals(p2);
         }
-        
-        public static bool operator !=(Polynomial p1, Polynomial p2) => p1.Variable != p2.Variable || p1.Coefficients != p2.Coefficients;
-        
+
+        /// <summary>
+        /// Method that overrides operator '!=' to compare two Polynomials
+        /// </summary>
+        /// <param name="p1">1st polynomial</param>
+        /// <param name="p2">2nd polynomial</param>
+        /// <returns>True if polynomials are not equal, else false</returns>
+        public static bool operator !=(Polynomial p1, Polynomial p2) => !p1.Equals(p2);
+
+        /// <summary>
+        /// Method that overrides operator '+' for addition of two Polynomials
+        /// </summary>
+        /// <param name="p1">1st polynomial</param>
+        /// <param name="p2">2nd polynomial</param>
+        /// <returns>New polynomial that is sum of given</returns>
         public static Polynomial operator +(Polynomial p1, Polynomial p2)
         {
-            if (p1.Coefficients.Length > p2.Coefficients.Length)
+            double[] larger = new double[p1.Degree], smaller = new double[p2.Degree];
+            ExtractPolynomialCoefficients(p1, p2, ref larger, ref smaller);
+            for (int i = 0; i < smaller.Length; i++)
             {
-                Polynomial p3 = p1;
-                for (int i = 0; i < p1.Coefficients.Length; i++)
-                {
-                    p3.Coefficients[i] = p1.Coefficients[i] + p2.Coefficients[i];
-                    p3.Variable = Math.Pow(p1.Variable, i);
-                }
-
-                return p3;
+                larger[i] += smaller[i];
             }
-            else
-            {
-                Polynomial p3 = p2;
-                for (int i = 0; i < p2.Coefficients.Length; i++)
-                {
-                    p3.Coefficients[i] = p1.Coefficients[i] + p2.Coefficients[i];
-                    p3.Variable = Math.Pow(p2.Variable, i);
-                }
 
-                return p3;
-            }
+            return new Polynomial(larger);
         }
 
+        /// <summary>
+        /// Method that overrides operator '-' for substaction of two Polynomials
+        /// </summary>
+        /// <param name="p1">1st polynomial</param>
+        /// <param name="p2">2nd polynomial</param>
+        /// <returns>New polynomial that is difference of given</returns>
         public static Polynomial operator -(Polynomial p1, Polynomial p2)
         {
-            if (p1.Coefficients.Length > p2.Coefficients.Length)
+            double[] larger = new double[p1.Degree], smaller = new double[p2.Degree];
+            ExtractPolynomialCoefficients(p1, p2, ref larger, ref smaller);
+            for (int i = 0; i < smaller.Length; i++)
             {
-                Polynomial p3 = p1;
-                for (int i = 0; i < p1.Coefficients.Length; i++)
-                {
-                    p3.Coefficients[i] = p1.Coefficients[i] - p2.Coefficients[i];
-                    p3.Variable = Math.Pow(p1.Variable, i);
-                }
-
-                return p3;
+                larger[i] -= smaller[i];
             }
-            else
-            {
-                Polynomial p3 = p2;
-                for (int i = 0; i < p2.Coefficients.Length; i++)
-                {
-                    p3.Coefficients[i] = p1.Coefficients[i] - p2.Coefficients[i];
-                    p3.Variable = Math.Pow(p2.Variable, i);
-                }
 
-                return p3;
-            }
+            return new Polynomial(larger);
         }
 
+        /// <summary>
+        /// Method that overrides operator '*' for multiplication of two Polynomials
+        /// </summary>
+        /// <param name="p1">1st polynomial</param>
+        /// <param name="p2">2nd polynomial</param>
+        /// <returns>New polynomial that is result of multiplication of given</returns>
         public static Polynomial operator *(Polynomial p1, Polynomial p2)
         {
-            if (p1.Coefficients.Length > p2.Coefficients.Length)
+            if (p1 is null || p2 is null)
             {
-                Polynomial p3 = p1;
-                for (int i = 0; i < p1.Coefficients.Length; i++)
-                {
-                    p3.Coefficients[i] = p1.Coefficients[i] * p2.Coefficients[i];
-                    p3.Variable = Math.Pow(p1.Variable, i * 2);
-                }
-
-                return p3;
+                throw new ArgumentNullException();
             }
-            else
+                        
+            double[] result = new double[p1.coefficients.Length + p2.coefficients.Length];
+            for (int i = 0; i < p1.coefficients.Length; i++)
             {
-                Polynomial p3 = p2;
-                for (int i = 0; i < p2.Coefficients.Length; i++)
+                for (int j = 0; j < p2.coefficients.Length; j++)
                 {
-                    p3.Coefficients[i] = p1.Coefficients[i] * p2.Coefficients[i];
-                    p3.Variable = Math.Pow(p2.Variable, i * 2);
+                    result[i + j] += p1.coefficients[i] * p2.coefficients[j];
                 }
-
-                return p3;
             }
+
+            return new Polynomial(result);
         }
 
+        /// <summary>
+        /// Method that overrides Equals method of System.Object class 
+        /// </summary>
+        /// <param name="obj">Boxed polynomial to compare with given</param>
+        /// <returns>True if polynomials are equal, else false</returns>
         public override bool Equals(object obj)
         {
-            Polynomial other = obj as Polynomial;
-            IStructuralEquatable se1 = Coefficients;
-            return other != null && Variable == other.Variable && se1.Equals(other.Coefficients, StructuralComparisons.StructuralEqualityComparer);            
+            if (obj is null || obj.GetType() != GetType())
+            {
+                return false;
+            }
+
+            if (!ReferenceEquals(this, obj))
+            {
+                return false;
+            }
+
+            var other = obj as Polynomial;
+            if (coefficients.Length != other.coefficients.Length)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < coefficients.Length; i++)
+            {
+                if (!coefficients[i].Equals(other.coefficients[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
+        /// <summary>
+        /// Method that overrides GetHashCode method of System.Object class
+        /// </summary>
+        /// <returns>HashCode of polynomial</returns>
         public override int GetHashCode()
         {
-            var hashCode = -2027836800;
-            hashCode = (hashCode * -1521134295) + Variable.GetHashCode();
-            hashCode = (hashCode * -1521134295) + EqualityComparer<int[]>.Default.GetHashCode(Coefficients);
+            var hashCode = 8179101;
+            hashCode = (hashCode * -1521134295) + EqualityComparer<double[]>.Default.GetHashCode(coefficients);
+            hashCode = (hashCode * -1521134295) + degree.GetHashCode();
+            hashCode = (hashCode * -1521134295) + Degree.GetHashCode();
             return hashCode;
         }
 
+        /// <summary>
+        /// Method that overrides ToString method of System.Object class
+        /// </summary>
+        /// <returns>String representation of polynomial</returns>
         public override string ToString()
         {
             StringBuilder stringBuilder = new StringBuilder();
-            for (int i = 2; i < Coefficients.Length; i++)
+            for (int i = 2; i < coefficients.Length; i++)
             {
-                stringBuilder.Append($"{Coefficients[i]} * x ^ {i} + ");
+                if (coefficients[i] > epsilon)
+                {
+                    stringBuilder.Append($"{coefficients[i]} * x ^ {i} + ");
+                }
+                else
+                {
+                    continue;
+                }
             }
 
-            string s = $"{Coefficients[0]} + {Coefficients[1]} * x + {stringBuilder.ToString()}";
+            string s = $"{coefficients[0]} + {coefficients[1]} * x + {stringBuilder.ToString()}";
             return s.Substring(0, s.Length - 3);
         }
+#endregion
+
+        #region Private Methods
+        private static void ExtractPolynomialCoefficients(Polynomial p1, Polynomial p2, ref double[] larger, ref double[] smaller)
+        {
+            if (p1 is null || p2 is null)
+            {
+                throw new ArgumentNullException();
+            }
+            
+            Array.Copy(p1.coefficients, larger, larger.Length);
+            Array.Copy(p2.coefficients, smaller, smaller.Length);
+            if (larger.Length < smaller.Length)
+            {
+                larger = new double[p2.Degree];
+                smaller = new double[p1.Degree];
+                Array.Copy(p2.coefficients, larger, larger.Length);
+                Array.Copy(p1.coefficients, smaller, smaller.Length);
+            }
+        }
+        #endregion
     }
 }
