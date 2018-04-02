@@ -25,7 +25,7 @@ namespace NET.S._2018.Haiduk._06
         public void PolynomialTest3()
         {
             Polynomial p1 = new Polynomial(new double[] { 10, 11, 12 });
-            Polynomial p2 = new Polynomial(new double[] { 10, 11, 12 });
+            Polynomial p2 = new Polynomial(new double[] { double.Epsilon, double.MinValue, 0 });
             Assert.IsTrue(p1 != p2);
         }
 
