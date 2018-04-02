@@ -25,7 +25,7 @@ namespace NET.S._2018.Haiduk._06
             catch (Exception)
             {
                 epsilon = 0.000001;
-            }            
+            }
         }
 
         /// <summary>
@@ -131,6 +131,11 @@ namespace NET.S._2018.Haiduk._06
         /// <returns>New polynomial that is sum of given</returns>
         public static Polynomial operator +(Polynomial p1, Polynomial p2)
         {
+            if (p1 is null || p2 is null)
+            {
+                throw new ArgumentNullException();
+            }
+
             double[] larger = new double[p1.Degree], smaller = new double[p2.Degree];
             ExtractPolynomialCoefficients(p1, p2, ref larger, ref smaller);
             for (int i = 0; i < smaller.Length; i++)
@@ -149,6 +154,11 @@ namespace NET.S._2018.Haiduk._06
         /// <returns>New polynomial that is difference of given</returns>
         public static Polynomial operator -(Polynomial p1, Polynomial p2)
         {
+            if (p1 is null || p2 is null)
+            {
+                throw new ArgumentNullException();
+            }
+
             double[] larger = new double[p1.Degree], smaller = new double[p2.Degree];
             ExtractPolynomialCoefficients(p1, p2, ref larger, ref smaller);
             for (int i = 0; i < smaller.Length; i++)
@@ -171,7 +181,7 @@ namespace NET.S._2018.Haiduk._06
             {
                 throw new ArgumentNullException();
             }
-                        
+
             double[] result = new double[p1.coefficients.Length + p2.coefficients.Length];
             for (int i = 0; i < p1.coefficients.Length; i++)
             {
@@ -196,9 +206,9 @@ namespace NET.S._2018.Haiduk._06
                 return false;
             }
 
-            if (!ReferenceEquals(this, obj))
+            if (ReferenceEquals(this, obj))
             {
-                return false;
+                return true;
             }
 
             var other = obj as Polynomial;
@@ -253,7 +263,7 @@ namespace NET.S._2018.Haiduk._06
             string s = $"{coefficients[0]} + {coefficients[1]} * x + {stringBuilder.ToString()}";
             return s.Substring(0, s.Length - 3);
         }
-#endregion
+        #endregion
 
         #region Private Methods
         private static void ExtractPolynomialCoefficients(Polynomial p1, Polynomial p2, ref double[] larger, ref double[] smaller)
@@ -262,7 +272,7 @@ namespace NET.S._2018.Haiduk._06
             {
                 throw new ArgumentNullException();
             }
-            
+
             Array.Copy(p1.coefficients, larger, larger.Length);
             Array.Copy(p2.coefficients, smaller, smaller.Length);
             if (larger.Length < smaller.Length)
