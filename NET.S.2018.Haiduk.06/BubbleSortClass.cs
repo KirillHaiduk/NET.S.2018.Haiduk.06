@@ -13,7 +13,7 @@ namespace NET.S._2018.Haiduk._06
         /// Method that sorts given array by ascending or descending of maximum elements of the rows using Bubble Sort algorythm
         /// </summary>
         /// <param name="array">Jagged unsorted array</param>
-        /// <param name="sortByAscending">If sorting by ascending of maximum elements - true, if by descending - false</param>
+        /// <param name="comparer">Type of sorting</param>
         public static void BubbleSort(int[][] array, IArrayComparer comparer)
         {
             if (array == null)
