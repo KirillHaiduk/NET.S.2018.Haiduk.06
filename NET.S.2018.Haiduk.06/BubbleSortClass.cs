@@ -8,6 +8,12 @@ namespace NET.S._2018.Haiduk._06
     /// </summary>
     public static class BubbleSortClass
     {
+        /// <summary>
+        /// Delegate for choosing kind of sorting
+        /// </summary>
+        /// <param name="arrayA">1st accepted array</param>
+        /// <param name="arrayB">2nd accepted array</param>
+        /// <returns>Calls required method of sorting</returns>
         public delegate int ArraySorter(int[] arrayA, int[] arrayB);
 
         #region Public Methods
