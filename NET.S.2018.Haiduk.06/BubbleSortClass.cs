@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace NET.S._2018.Haiduk._06
 {
@@ -8,11 +8,12 @@ namespace NET.S._2018.Haiduk._06
     public static class BubbleSortClass
     {
         #region Public Methods
+
         /// <summary>
-        /// Method that sorts given array by ascending or descending of maximum elements of the rows using Bubble Sort algorythm
+        /// Method that sorts given array by given criterion (instance of IArrayComparer type) using Bubble Sort algorythm
         /// </summary>
         /// <param name="array">Jagged unsorted array</param>
-        /// <param name="sortByAscending">If sorting by ascending of maximum elements - true, if by descending - false</param>
+        /// <param name="comparer">Criterion of sorting</param>
         public static void BubbleSort(int[][] array, IArrayComparer comparer)
         {
             if (array == null)
@@ -36,7 +37,12 @@ namespace NET.S._2018.Haiduk._06
                 }
             }
         }
-        
+
+        /// <summary>
+        /// Method that sorts given array by given criterion (instance of AdapterForDelegate class) using Bubble Sort algorythm
+        /// </summary>
+        /// <param name="array">Jagged unsorted array</param>
+        /// <param name="adapterForDelegate">Instance of AdapterForDelegate class that incapsulates delegate as sorting type</param>
         public static void BubbleSortWithDelegate(int[][] array, AdapterForDelegate adapterForDelegate)
         {
             if (array == null)
