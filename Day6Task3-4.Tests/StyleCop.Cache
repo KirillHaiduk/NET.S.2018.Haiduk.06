@@ -184,9 +184,6 @@
     </timestamps>
     <violations />
   </sourcecode>
-  <project key="1738175073">
-    <configuration>DEBUG;TRACE</configuration>
-  </project>
   <sourcecode name="BubbleSortClassTests.cs" parser="StyleCop.CSharp.CsParser">
     <timestamps>
       <styleCop>2018.03.08 16:31:07.664</styleCop>
@@ -210,4 +207,7 @@
     </timestamps>
     <violations />
   </sourcecode>
+  <project key="1738175073">
+    <configuration>DEBUG;TRACE</configuration>
+  </project>
 </stylecopresultscache>

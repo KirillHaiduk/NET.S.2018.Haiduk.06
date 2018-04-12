@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdapterForDelegate.cs" />
     <Compile Include="BubbleSortClass.cs" />
     <Compile Include="IArrayComparer.cs" />
     <Compile Include="Polynomial.cs" />

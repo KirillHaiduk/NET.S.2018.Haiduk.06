@@ -50,6 +50,12 @@
     <Compile Include="BubbleSortClassTests.cs" />
     <Compile Include="PolynomialTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SortByMinAscending.cs" />
+    <Compile Include="SortByMinDescending.cs" />
+    <Compile Include="SortBySumDescending.cs" />
+    <Compile Include="SortBySumAscending.cs" />
+    <Compile Include="SortByMaxAscending.cs" />
+    <Compile Include="SortByMaxDescending.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
